@@ -1,6 +1,7 @@
 ﻿using AoCHelper;
+using System;
 using System.IO;
-
+using Spectre.Console;
 namespace AdventOfCode
 {
     public class Day_01 : BaseDay
@@ -12,8 +13,14 @@ namespace AdventOfCode
             _input = File.ReadAllText(InputFilePath);
         }
 
-        public override string Solve_1() => $"Solution to {ClassPrefix} {CalculateIndex()}, part 1";
+        public override string Solve_1()
+        {
+            return "foo";
+        }
 
-        public override string Solve_2() => $"Solution to {ClassPrefix} {CalculateIndex()}, part 2";
+        public override string Solve_2()
+        {
+            return "bar";
+        }
     }
 }
