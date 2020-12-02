@@ -2,4 +2,4 @@
 using AoCHelper;
 using Spectre.Console;
 
-Solver.Solve<Day_01>(false);
+Solver.Solve<Day_02>(false);
