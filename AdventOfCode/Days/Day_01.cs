@@ -1,14 +1,7 @@
 ﻿using AoCHelper;
 using System;
-using System.IO;
-using Spectre.Console;
 using AdventOfCode.Inputs;
 using System.Linq;
-using System.Collections.Generic;
-using System.Drawing;
-using AdventOfCode.Utilities;
-using System.ComponentModel;
-using System.Security.Cryptography.X509Certificates;
 
 namespace AdventOfCode
 {
