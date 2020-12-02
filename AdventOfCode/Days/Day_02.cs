@@ -48,19 +48,8 @@ namespace AdventOfCode
                 /* part 2 says the rule is actual that the reqChar needs to be at exactly
                  * one of the positions [minimum] or [maximum], 1-indexed 
                  */
-                var passLength = passText.Length;
-                var matchCount = 0;
-                if (minimum <= passLength && passText[minimum - 1] == reqChar)
-                {
-                    matchCount++;
-                }
+                return (passText[minimum - 1] == reqChar) ^ (passText[maximum - 1] == reqChar);
 
-                if (maximum <= passLength && passText[maximum - 1] == reqChar)
-                {
-                    matchCount++;
-                }
-
-                return matchCount == 1;
             }
 
         }
