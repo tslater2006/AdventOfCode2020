@@ -4,16 +4,20 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
+using System.Diagnostics;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace AdventOfCode
 {
     public class Day_03 : BaseDay
     {
-        private readonly List<List<string>> _input;
+        private readonly string[] _input;
 
         public Day_03()
         {
-            _input = InputParser.AsLinesCharGrid(InputFilePath);
+            _input = InputParser.AsLines(InputFilePath);
         }
 
         public override string Solve_1()
@@ -29,37 +33,26 @@ namespace AdventOfCode
             {
                 product *= TreesForSlope(slope.right, slope.down);
             }
-
             return product.ToString();
         }
 
         private int TreesForSlope(int x, int y)
         {
-            var mapHeight = _input.Count;
-            var mapWidth = _input[0].Count;
-
+            var mapHeight = _input.Length;
+            var mapWidth = _input[0].Length;
+            var xIndex = 0;
             var treeCount = 0;
 
-            Point location = new Point(0, 0);
-
-            while (location.Y < mapHeight)
+            for(var yIndex = 0; yIndex < mapHeight; yIndex += y)
             {
-                if (_input[location.Y][location.X] == "#")
+                if (_input[yIndex][xIndex % mapWidth] == '#')
                 {
                     treeCount++;
                 }
-
-                location.X += x;
-                if (location.X > mapWidth - 1)
-                {
-                    location.X -= mapWidth;
-                }
-                location.Y += y;
-
+                xIndex += x;
             }
             return treeCount;
         }
-
     }
 
 }
