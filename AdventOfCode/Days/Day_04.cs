@@ -7,41 +7,73 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
+using System.IO;
 
 namespace AdventOfCode
 {
-    public class Passport
-    {
-        public Dictionary<string, string> Fields = new Dictionary<string, string>();
 
-        public bool IsValid(bool validateValues)
+    public class Day_04 : BaseDay
+    {
+        string[] passports;
+        List<Regex> fieldRegexes = new List<Regex>();
+        public Day_04()
         {
+            passports = File.ReadAllText(InputFilePath).Split("\r\n\r\n");
+            passports = passports.Select(p => p.Replace("\r\n", " ")).ToArray();
+
             string[] required = new string[] { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
-            string[] currentKeys = Fields.Keys.ToArray();
+
             foreach(var r in required)
             {
-                if (currentKeys.Contains(r) == false)
+                fieldRegexes.Add(new Regex($"({r}):([^ ]+)",RegexOptions.Singleline));
+            }
+
+        }
+
+        public override string Solve_1()
+        {
+            var validCount = passports.Where(p => ValidatePassport(p,false)).Count();
+
+            return validCount.ToString();
+        }
+
+        public override string Solve_2()
+        {
+            var validCount = passports.Where(p => ValidatePassport(p, true)).Count();
+
+            return validCount.ToString();
+        }
+
+        bool ValidatePassport(string passport, bool validateData)
+        {
+            foreach(Regex r in fieldRegexes)
+            {
+                var match = r.Match(passport);
+                if (match.Success)
                 {
-                    return false;
-                } else
-                {
-                    if (validateValues)
+                    if (validateData)
                     {
-                        if (ValidateField(r,Fields[r]) == false)
+                        var key = match.Groups[1].Value;
+                        var value = match.Groups[2].Value;
+                        if (!ValidateField(key, value))
                         {
                             return false;
                         }
                     }
+                } else
+                {
+                    /* missing a required field */
+                    return false;
                 }
-            }
 
+            }
             return true;
         }
 
         public bool ValidateField(string key, string value)
         {
             int parseResult;
-            switch(key)
+            switch (key)
             {
                 case "byr":
                     return (value.Length == 4 && int.TryParse(value, out parseResult) && (parseResult >= 1920 && parseResult <= 2002));
@@ -63,9 +95,7 @@ namespace AdventOfCode
                 case "cid":
                     return true;
                 default:
-                    int i = 3;
                     return false;
-
             }
         }
 
@@ -77,10 +107,10 @@ namespace AdventOfCode
 
             var value = int.Parse(match.Groups[1].Value);
             var unit = match.Groups[2].Value;
-            
+
             if (unit == "cm")
             {
-                return (value >= 150 && value <= 193);                
+                return (value >= 150 && value <= 193);
             }
             else if (unit == "in")
             {
@@ -93,57 +123,6 @@ namespace AdventOfCode
             }
         }
 
-    }
-    public class Day_04 : BaseDay
-    {
-        private readonly string[] _input;
-        List<Passport> passports;
-        public Day_04()
-        {
-            _input = InputParser.AsLines(InputFilePath);
-            passports = ParsePassports();
-        }
-
-        public override string Solve_1()
-        {
-            var validCount = passports.Where(p => p.IsValid(false)).Count();
-
-            return validCount.ToString();
-        }
-
-        public override string Solve_2()
-        {
-            var validCount = passports.Where(p => p.IsValid(true)).Count();
-
-            return validCount.ToString();
-        }
-
-        List<Passport> ParsePassports()
-        {
-            List<Passport> parsedList = new List<Passport>();
-            Passport current = new Passport();
-
-            for (var x = 0; x < _input.Length; x++)
-            {
-                var line = _input[x].Trim();
-                if (line.Length > 0)
-                {
-                    var fields = line.Split(" ");
-                    foreach (var f in fields)
-                    {
-                        var parts = f.Split(":");
-                        current.Fields.Add(parts[0], parts[1]);
-                    }
-                }
-                else
-                {
-                    parsedList.Add(current);
-                    current = new Passport();
-                }
-            }
-            parsedList.Add(current);
-            return parsedList;
-        }
     }
 
 }
