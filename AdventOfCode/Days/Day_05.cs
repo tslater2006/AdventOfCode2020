@@ -8,118 +8,60 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode
 {
-    internal record TreeNode(TreeNode Left, TreeNode Right, int Number);
     public class Day_05 : BaseDay
     {
         string[] boardingPasses;
-        TreeNode rootRowNode;
-        TreeNode rootColumnNode;
         public Day_05()
         {
             boardingPasses = InputParser.AsLines(InputFilePath);
-
-            /* build out binary tree for row */
-            rootRowNode = BuildTree(128);
-
-            rootColumnNode = BuildTree(8);
         }
 
-        private TreeNode BuildTree(int leafCount)
+        /* Seat strings are basically binary strings where FBLR matches to 0101 respectively
+         * Just decode the string into a number, treating it as binary
+         * No need to split into row and column even since row * 8 + column matches the full number */
+        private int GetSeatID(string boardingPass)
         {
-            Queue<TreeNode> nodesLeft = new Queue<TreeNode>();
-            for(var x = 0; x < leafCount; x++)
+            int seatID = 0;
+            foreach (var c in boardingPass)
             {
-                nodesLeft.Enqueue(new TreeNode(null,null,x));
-            }
-
-            while (nodesLeft.Count > 1)
-            {
-                /* pop 2, make a parent, push to the end */
-                nodesLeft.Enqueue(new TreeNode(nodesLeft.Dequeue(), nodesLeft.Dequeue(),0));
-            }
-
-            return nodesLeft.Dequeue();
-        }
-
-        private (int Row,int Column) DecodeBoardingPass(string boardingPass)
-        {
-            var curNode = rootRowNode;
-            /* decode the row */
-            for(var x = 0; x < 7; x++)
-            {
-                switch (boardingPass[x])
+                seatID <<= 1;
+                switch (c)
                 {
-                    case 'F':
-                        curNode = curNode.Left;
-                        break;
                     case 'B':
-                        curNode = curNode.Right;
-                        break;
-                }
-            }
-
-            var row = curNode.Number;
-
-            curNode = rootColumnNode;
-            for (var x = 7; x < 10; x++)
-            {
-                switch (boardingPass[x])
-                {
-                    case 'L':
-                        curNode = curNode.Left;
+                        seatID++;
                         break;
                     case 'R':
-                        curNode = curNode.Right;
+                        seatID++;
                         break;
                 }
+
             }
-
-            var column = curNode.Number;
-
-            return (row,column);
+            return seatID;
         }
 
         public override string Solve_1()
         {
             var maxID = 0;
 
-            foreach(var pass in boardingPasses)
-            {
-                var location = DecodeBoardingPass(pass);
-                var seatID = location.Row * 8 + location.Column;
-
-                if (seatID > maxID)
-                {
-                    maxID = seatID;
-                }
-            }
+            maxID = boardingPasses.Select(b => GetSeatID(b)).Max();
 
             return maxID.ToString();
         }
 
         public override string Solve_2()
         {
-            SortedSet<int> seatIDs = new SortedSet<int>();
-
-            foreach (var pass in boardingPasses)
-            {
-                var location = DecodeBoardingPass(pass);
-                seatIDs.Add(location.Row * 8 + location.Column);
-            }
-
-            var sortedArray = seatIDs.ToArray();
+            var seatIDs = boardingPasses.Select(b => GetSeatID(b)).OrderBy(b => b).ToArray();
 
             var mySeat = -1;
 
-            for (var x = 0; x < sortedArray.Length - 1; x++)
+            for (var x = 0; x < seatIDs.Length - 1; x++)
             {
-                if (sortedArray[x+1] != sortedArray[x] + 1)
+                if (seatIDs[x+1] != seatIDs[x] + 1)
                 {
-                    mySeat = sortedArray[x] + 1;
+                    mySeat = seatIDs[x] + 1;
                     break;
                 }
             }
-
 
             return mySeat.ToString();
         }
