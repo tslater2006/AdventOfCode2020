@@ -24,16 +24,12 @@ namespace AdventOfCode
             int seatID = 0;
             foreach (var c in boardingPass)
             {
+                /* shift everything to make room for next bit */
                 seatID <<= 1;
-                switch (c)
-                {
-                    case 'B':
-                        seatID++;
-                        break;
-                    case 'R':
-                        seatID++;
-                        break;
-                }
+
+                /* happy accident that 'B' and 'R' when modded by 7 and then that modded by 2 are 1
+                 * and 'F' and 'L' when done the same are 0, this happens to map to the 1's and 0's we need */
+                seatID += ((c % 7) % 2);
 
             }
             return seatID;
