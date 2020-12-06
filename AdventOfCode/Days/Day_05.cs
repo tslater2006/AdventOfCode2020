@@ -2,6 +2,7 @@
 using AoCHelper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,18 +47,33 @@ namespace AdventOfCode
 
         public override string Solve_2()
         {
-            var seatIDs = boardingPasses.Select(b => GetSeatID(b)).OrderBy(b => b).ToArray();
+            
+            var sum = 0;
+            var min = 100000;
+            var max = 0;
 
-            var mySeat = -1;
-
-            for (var x = 0; x < seatIDs.Length - 1; x++)
+            /* in a single pass, we get the sum, the smallest number, and the largest number */
+            foreach (var pass in boardingPasses)
             {
-                if (seatIDs[x+1] != seatIDs[x] + 1)
+                var seat = GetSeatID(pass);
+                if (seat > max)
                 {
-                    mySeat = seatIDs[x] + 1;
-                    break;
+                    max = seat;
                 }
+                if (seat < min)
+                {
+                    min = seat;
+                }
+                sum += seat;
             }
+
+            /*    sum of integers 1 to max
+             *  - sum of integers 1 to min = sum of range (min to max)
+             *  - sum of numbers present = index of missing number in the range
+             *  + min = actual missing number
+             */
+            var mySeat = (max * (max + 1) / 2) - (min * (min + 1) / 2) - sum + min;
+
 
             return mySeat.ToString();
         }
