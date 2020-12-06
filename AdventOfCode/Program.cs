@@ -2,5 +2,5 @@
 using AoCHelper;
 using Spectre.Console;
 
-Solver.SolveAll();
-//Solver.Solve<Day_05>(false);
+//Solver.SolveAll();
+Solver.Solve<Day_06>(false);
