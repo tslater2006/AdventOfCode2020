@@ -17,24 +17,7 @@ namespace AdventOfCode
         }
         public override string Solve_1()
         {
-            var sum = 0;
-            foreach(var g in Groups)
-            {
-                HashSet<char> groupSet = new HashSet<char>();
-
-                foreach(var c in g)
-                {
-                    if (c >= 'a' && c <= 'z' && groupSet.Contains(c) == false)
-                    {
-                        groupSet.Add(c);
-                    }
-                }
-
-                sum += groupSet.Count;
-            }
-
-
-            return sum.ToString();
+            return Groups.Sum(g => g.Where(c => c >= 'a' && c <= 'z').Distinct().Count()).ToString();
         }
 
         public override string Solve_2()
@@ -51,12 +34,8 @@ namespace AdventOfCode
                 {
                     final = final.Intersect(groupAnswers[x]);
                 }
-
-
                 sum += final.Count();
             }
-
-
             return sum.ToString();
         }
     }
