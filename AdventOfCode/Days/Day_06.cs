@@ -1,4 +1,5 @@
-﻿using AoCHelper;
+﻿using AdventOfCode.Inputs;
+using AoCHelper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace AdventOfCode
         string[] Groups;
         public Day_06()
         {
-            Groups = File.ReadAllText(InputFilePath).Split("\r\n\r\n");
+            Groups = InputParser.AsParagraphs(InputFilePath);
         }
         public override string Solve_1()
         {

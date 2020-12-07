@@ -10,6 +10,11 @@ namespace AdventOfCode.Inputs
 {
     class InputParser
     {
+        public static string[] AsParagraphs(string path)
+        {
+            
+            return File.ReadAllText(path).Split(Environment.NewLine + Environment.NewLine);
+        }
         public static string[] AsLines(string path)
         {
 

@@ -18,7 +18,7 @@ namespace AdventOfCode
         List<Regex> fieldRegexes = new List<Regex>();
         public Day_04()
         {
-            passports = File.ReadAllText(InputFilePath).Split("\r\n\r\n");
+            passports = InputParser.AsParagraphs(InputFilePath);
             passports = passports.Select(p => p.Replace("\r\n", " ")).ToArray();
 
             string[] required = new string[] { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
