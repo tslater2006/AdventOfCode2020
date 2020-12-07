@@ -52,12 +52,8 @@ namespace AdventOfCode
                         rule.Contents.Add(ruleMap[type], int.Parse(amount));
                         containedType.ContainedBy.Add(rule);
                     }
-
-
                 }
-
             }
-
         }
         public override string Solve_1()
         {
