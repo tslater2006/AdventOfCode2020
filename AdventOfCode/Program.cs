@@ -3,4 +3,4 @@ using AoCHelper;
 using Spectre.Console;
 
 //Solver.SolveAll();
-Solver.Solve<Day_07>(false);
+Solver.Solve<Day_08>(false);
