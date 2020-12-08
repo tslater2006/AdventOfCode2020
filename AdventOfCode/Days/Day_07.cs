@@ -36,7 +36,7 @@ namespace AdventOfCode
             foreach (var r in luggageRules)
             {
                 var match = ruleStart.Match(r);
-                ruleMap.Add(match.Groups[1].Value,new LuggageRule() { Type = match.Groups[1].Value, ContentString = match.Groups[2].Value });
+                ruleMap.Add(match.Groups[1].Value, new LuggageRule() { Type = match.Groups[1].Value, ContentString = match.Groups[2].Value });
             }
 
             foreach (var rule in ruleMap.Values)
@@ -65,7 +65,7 @@ namespace AdventOfCode
 
             while (stack.Count > 0)
             {
-                foreach(var c in stack.Pop().ContainedBy)
+                foreach (var c in stack.Pop().ContainedBy)
                 {
                     possible.Add(c.Type);
                     if (c.ContainedBy.Count > 0)
@@ -83,42 +83,35 @@ namespace AdventOfCode
             var shinyGoldRule = ruleMap["shiny gold"];
 
             var sum = GetCountForBag(shinyGoldRule);
-            
+
+
             return sum.ToString();
         }
         static Dictionary<LuggageRule, int> memoize = new Dictionary<LuggageRule, int>();
+        static long memoizeHit;
+        static long memoizeMiss;
         public int GetCountForBag(LuggageRule r)
         {
             /* if we've already resolved this bag type, pull from cache */
             if (memoize.ContainsKey(r))
             {
+                memoizeHit++;
                 return memoize[r];
-            } else
-            {
-                /* if this bag contains nothing, save that to the cache and return 0 */
-                if (r.Contents.Count == 0)
-                {
-                    if (memoize.ContainsKey(r) == false)
-                    {
-                        memoize.Add(r, 0);
-                    }
-                    return 0;
-                }
-                else
-                {
-                    /* otherwise, for each bag this bag contains, do "bags inside that bag + 1 
-                     * (to count the outer bag itself) times how many of this bag are included */
-                    var cost = 0;
-                    foreach (var c in r.Contents)
-                    {
-                        cost += c.Value * (GetCountForBag(c.Key) + 1);
-                    }
-
-                    /* cache the result for later lookups */
-                    memoize.Add(r, cost);
-                    return cost;
-                }
             }
+
+            memoizeMiss++;
+            
+            /* otherwise, for each bag this bag contains, do "bags inside that bag + 1 
+                * (to count the outer bag itself) times how many of this bag are included */
+            var cost = 0;
+            foreach (var c in r.Contents)
+            {
+                cost += c.Value * (GetCountForBag(c.Key) + 1);
+            }
+
+            /* cache the result for later lookups */
+            memoize.Add(r, cost);
+            return cost;
 
         }
     }
