@@ -82,26 +82,44 @@ namespace AdventOfCode
         {
             var shinyGoldRule = ruleMap["shiny gold"];
 
-            var sum = 0;
-            Stack<LuggageRule> stack = new Stack<LuggageRule>();
-            stack.Push(shinyGoldRule);
-
-            while (stack.Count > 0)
+            var sum = GetCountForBag(shinyGoldRule);
+            
+            return sum.ToString();
+        }
+        static Dictionary<LuggageRule, int> memoize = new Dictionary<LuggageRule, int>();
+        public int GetCountForBag(LuggageRule r)
+        {
+            /* if we've already resolved this bag type, pull from cache */
+            if (memoize.ContainsKey(r))
             {
-                var curRule = stack.Pop();
-                sum += curRule.Contents.Values.Sum();
-
-                foreach(var key in curRule.Contents.Keys)
+                return memoize[r];
+            } else
+            {
+                /* if this bag contains nothing, save that to the cache and return 0 */
+                if (r.Contents.Count == 0)
                 {
-                    for (var x = 0; x < curRule.Contents[key]; x++)
+                    if (memoize.ContainsKey(r) == false)
                     {
-                        stack.Push(key);
+                        memoize.Add(r, 0);
                     }
+                    return 0;
                 }
+                else
+                {
+                    /* otherwise, for each bag this bag contains, do "bags inside that bag + 1 
+                     * (to count the outer bag itself) times how many of this bag are included */
+                    var cost = 0;
+                    foreach (var c in r.Contents)
+                    {
+                        cost += c.Value * (GetCountForBag(c.Key) + 1);
+                    }
 
+                    /* cache the result for later lookups */
+                    memoize.Add(r, cost);
+                    return cost;
+                }
             }
 
-            return sum.ToString();
         }
     }
 }
