@@ -56,26 +56,23 @@ namespace AdventOfCode
 
         public override string Solve_2()
         {
-            /* find a contingous list of numbers that sum to part 1 answer */
             var startIndex = 0;
-            var curIndex = 0;
-            long currentSum = 0;
+            var stopIndex = 0;
+            long sum = 0;
 
-            while (currentSum != part1Answer)
+            while (sum != part1Answer)
             {
-                currentSum += list[startIndex + (curIndex++)];
-
-                if (currentSum > part1Answer)
+                if (sum < part1Answer)
                 {
-                    /* no sense going further here, we've exceeded the number */
-                    currentSum = 0;
-                    curIndex = 0;
-                    startIndex++;
+                    sum += list[stopIndex++];
+                }
+                else
+                {
+                    sum -= list[startIndex++];
                 }
             }
 
-            var range = new long[curIndex];
-            Array.Copy(list, startIndex, range, 0, curIndex);
+            var range = list.Skip(startIndex).Take(stopIndex - startIndex).ToArray();
             var ans = range.Min() + range.Max();
 
             return ans.ToString();
