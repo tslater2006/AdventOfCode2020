@@ -71,10 +71,26 @@ namespace AdventOfCode
                     sum -= list[startIndex++];
                 }
             }
+            long[] range = new long[stopIndex - startIndex];
+            Array.Copy(list, startIndex, range, 0, stopIndex - startIndex);
+            var min = range[0];
+            var max = range[0];
 
-            var range = list.Skip(startIndex).Take(stopIndex - startIndex).ToArray();
-            var ans = range.Min() + range.Max();
-
+            for (var x = 1; x < range.Length; x++)
+            {
+                if (range[x] < min)
+                {
+                    min = range[x];
+                    continue;
+                }
+                if (range[x] > max)
+                {
+                    max = range[x];
+                    continue;
+                }
+            }
+            //var ans = range.Min() + range.Max();
+            var ans = min + max;
             return ans.ToString();
         }
     }
