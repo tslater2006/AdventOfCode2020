@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,11 +20,15 @@ namespace AdventOfCode
         int gridHeight;
         int gridWidth;
         Dictionary<(int, int), List<(int, int)>> neighborMap = new Dictionary<(int, int), List<(int, int)>>();
+        bool[] settledColumns;
+        bool[] settledRows;
         public Day_11()
         {
             originalGrid = InputParser.AsLinesCharGrid(InputFilePath);
             gridHeight = originalGrid.GetLength(0);
             gridWidth = originalGrid.GetLength(1);
+            settledRows = new bool[gridHeight];
+            settledColumns = new bool[gridWidth];
         }
         public override string Solve_1()
         {
@@ -47,17 +52,18 @@ namespace AdventOfCode
 
             return occupied.ToString();
         }
-
+        
         private bool EvolveGrid(int numberToEmpty = 4, bool lineOfSight = false)
         {
-            
-
             var madeChange = false;
-            List<(int X, int Y)> seatsToChange = new List<(int X, int Y)>();
+            bool[] iterRowChange = new bool[gridHeight];
+            bool[] iterColumnChange = new bool[gridWidth];
             for (var x = 0; x < gridWidth; x++)
             {
+                if (settledColumns[x]) { continue; }
                 for (var y = 0; y < gridHeight; y++)
                 {
+                    if (settledRows[y]) { continue; }
                     var curSeat = seatGrid[y, x];
                     if (curSeat != '.')
                     {
@@ -96,14 +102,34 @@ namespace AdventOfCode
                         if (curSeat == 'L' && seatedNeighbors == 0)
                         {
                             madeChange = true;
+                            iterColumnChange[x] = true;
+                            iterRowChange[y] = true;
                             workingCopy[y, x] = '#';
                         }
                         else if (curSeat == '#' && seatedNeighbors >= numberToEmpty)
                         {
                             madeChange = true;
+                            iterColumnChange[x] = true;
+                            iterRowChange[y] = true;
                             workingCopy[y, x] = 'L';
                         }
                     }
+                }
+            }
+
+            for (var z = 0; z < iterColumnChange.Length; z++)
+            {
+                if (!iterColumnChange[z])
+                {
+                    settledColumns[z] = true;
+                }
+            }
+
+            for (var z = 0; z < iterRowChange.Length; z++)
+            {
+                if (!iterRowChange[z])
+                {
+                    settledRows[z] = true;
                 }
             }
 
@@ -117,6 +143,8 @@ namespace AdventOfCode
             seatGrid = originalGrid.Clone() as char[,];
             workingCopy = originalGrid.Clone() as char[,];
             neighborMap.Clear();
+            settledColumns = new bool[gridWidth];
+            settledRows = new bool[gridHeight];
             bool changeHappened = true;
             while (changeHappened)
             {
