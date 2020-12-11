@@ -66,11 +66,21 @@ namespace AdventOfCode.Inputs
                         .ToList();
         }
 
-        public static List<List<string>> AsLinesCharGrid(string path)
+        public static char[,] AsLinesCharGrid(string path)
         {
             var lines = AsLines(path);
 
-            return lines.Select(l => l.ToCharArray().Select(c => new string(c, 1)).ToList()).ToList();
+            var grid = new char[lines.Count(), lines[0].Length];
+
+            for(var y = 0; y < lines.Count(); y++)
+            {
+                for (var x = 0; x < lines[y].Length; x++)
+                {
+                    grid[y, x] = lines[y][x];
+                }
+            }
+
+            return grid;
         }
 
         public static List<Point> AsLinePoints(string path, char present)
