@@ -62,11 +62,11 @@ namespace AdventOfCode
 
             while (sum != part1Answer)
             {
-                if (sum < part1Answer)
+                while(sum < part1Answer)
                 {
                     sum += list[stopIndex++];
                 }
-                else
+                while (sum > part1Answer) 
                 {
                     sum -= list[startIndex++];
                 }
