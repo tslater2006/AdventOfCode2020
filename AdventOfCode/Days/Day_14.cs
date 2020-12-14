@@ -13,7 +13,7 @@ namespace AdventOfCode
     public class Day_14 : BaseDay
     {
         string[] _lines;
-        Regex numberRegex = new Regex("(\\d+)");
+        Regex numberRegex = new("(\\d+)");
         public Day_14()
         {
             _lines = InputParser.AsLines(InputFilePath);
@@ -21,7 +21,7 @@ namespace AdventOfCode
 
         public override string Solve_1()
         {
-            Dictionary<ulong, ulong> memory = new Dictionary<ulong, ulong>();
+            Dictionary<ulong, ulong> memory = new();
             ulong andMask = 0;
             ulong orMask = 0;
             foreach (var line in _lines)
@@ -29,7 +29,8 @@ namespace AdventOfCode
                 if (line.StartsWith("mask"))
                 {
                     (andMask, orMask) = ParseMask(line[7..]);
-                } else
+                }
+                else
                 {
                     var numbers = numberRegex.Matches(line);
                     var memAddr = ulong.Parse(numbers[0].Groups[1].Value);
@@ -39,7 +40,7 @@ namespace AdventOfCode
                 }
             }
             ulong sum = 0;
-            foreach( var v in memory.Values)
+            foreach (var v in memory.Values)
             {
                 sum += v;
             }
@@ -91,10 +92,6 @@ namespace AdventOfCode
                     results[z] <<= 1;
                 }
 
-                if (x == 29)
-                {
-                    int i = 3;
-                }
                 var c = str[x];
                 var addrBit = (address >> (36 - (x + 1)) & 1);
                 if (c == '1')
