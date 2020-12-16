@@ -6,4 +6,4 @@ using System.IO.Compression;
 using System.Linq;
 
 //Solver.SolveAll();
-Solver.Solve<Day_15>(false);
+Solver.Solve<Day_16>(false);
