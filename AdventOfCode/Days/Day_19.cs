@@ -24,7 +24,7 @@ namespace AdventOfCode
         string[] _lines;
         Dictionary<int, Rule> rules = new();
         List<string> inputStrings = new List<string>();
-        int part1MaxDepth = 0;
+        int part1Depth = 0;
         public Day_19()
         {
             _lines = InputParser.AsLines(InputFilePath);
@@ -73,9 +73,9 @@ namespace AdventOfCode
             if (maxDepth == 0) return "";
 
             /* for part 1, maxDepth is -1 and descends, and we want to track how deep it goes */
-            if (maxDepth < 0 && maxDepth < part1MaxDepth)
+            if (maxDepth < 0 && maxDepth < part1Depth)
             {
-                part1MaxDepth = maxDepth;
+                part1Depth = maxDepth;
             }
 
             if (r.Terminal != null)
@@ -130,8 +130,9 @@ namespace AdventOfCode
             rules[11].Alternate2 = new List<int>() { 42, 11, 31};
 
             int lastCount = 0;
-            /* you can put this to 15 and get the answer much faster, but for generic solution, best to keep at 0 */
-            int curMax = Math.Abs(part1MaxDepth);
+            /* we start at the known-depth of the original rules 
+             * this prevents a bunch of issues with not going deep enough */
+            int curMax = Math.Abs(part1Depth);
             while (true)
             {
                 var regex = "^" + BuildRuleRegex(rules[0], curMax) + "$";
