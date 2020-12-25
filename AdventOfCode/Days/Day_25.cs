@@ -25,7 +25,6 @@ namespace AdventOfCode
         public override string Solve_1()
         {
             long loopSize1 = FindLoopSize(7,PublicKeys[0]);
-            long loopSize2 = FindLoopSize(7, PublicKeys[1]);
 
             long ans = CalcEncryptionKey(PublicKeys[1], loopSize1);
 
@@ -57,7 +56,7 @@ namespace AdventOfCode
 
         public override string Solve_2()
         {
-            return "";
+            return "Merry Christmas!";
         }
     }
 }
