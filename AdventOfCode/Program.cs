@@ -8,4 +8,4 @@ using System.Linq;
 
 
 //Solver.SolveAll();
-Solver.Solve<Day_25>(false);
+Solver.Solve<Day_23>(false);

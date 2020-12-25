@@ -13,179 +13,106 @@ namespace AdventOfCode
 {
     public class CupGame
     {
-        Dictionary<int, Cup> cupMap = new();
-        Cup currentCup;
-        int maxCup;
-        int minCup = 100;
-        public CupGame(string cupOrder)
+        int[] cupArray;
+        int currentCup;
+        public CupGame(string cupOrder, int cupCount = 0)
         {
-            Cup firstCup = null;
-            Cup previousCup = null;
+            if (cupCount == 0)
+            {
+                cupCount = cupOrder.Length;
+            }
+            cupArray = new int[cupCount];
+            int firstCup = -1; ;
+            int previousCup = -1;
             foreach (var c in cupOrder.Select(c => c - 0x30))
             {
-                maxCup = (c > maxCup) ? c : maxCup;
-                minCup = (c < minCup) ? c : minCup;
-
-                Cup newCup = new Cup() { Label = c };
-
-                if (firstCup == null)
+                if (firstCup == -1)
                 {
-                    firstCup = newCup;
-                    previousCup = newCup;
+                    firstCup = c - 1;
+                    previousCup = c - 1;
                 }
                 else
                 {
-                    previousCup.Next = newCup;
-                    previousCup = newCup;
+                    cupArray[previousCup] = c - 1;
+                    previousCup = c - 1;
                 }
-                cupMap.Add(c, newCup);
             }
-
+            for (var x = cupOrder.Length; x < cupCount ; x++)
+            {
+                cupArray[previousCup] = x ;
+                previousCup = x;
+            }
             /* connect the last one to the first one */
-            previousCup.Next = firstCup;
+            cupArray[previousCup] = firstCup;
             currentCup = firstCup;
         }
 
-        public CupGame(string cupOrder, int totalCups)
-        {
-            Cup firstCup = null;
-            Cup previousCup = null;
-            foreach (var c in cupOrder.Select(c => c - 0x30))
-            {
-                maxCup = (c > maxCup) ? c : maxCup;
-                minCup = (c < minCup) ? c : minCup;
-
-                Cup newCup = new Cup() { Label = c };
-
-                if (firstCup == null)
-                {
-                    firstCup = newCup;
-                    previousCup = newCup;
-                }
-                else
-                {
-                    previousCup.Next = newCup;
-                    previousCup = newCup;
-                }
-                cupMap.Add(c, newCup);
-            }
-
-            for (var x = maxCup + 1; x <= 1000000; x++)
-            {
-                Cup newCup = new Cup() { Label = x };
-
-                if (firstCup == null)
-                {
-                    firstCup = newCup;
-                    previousCup = newCup;
-                }
-                else
-                {
-                    previousCup.Next = newCup;
-                    previousCup = newCup;
-                }
-                cupMap.Add(x, newCup);
-            }
-            maxCup = totalCups;
-            /* connect the last one to the first one */
-            previousCup.Next = firstCup;
-            currentCup = firstCup;
-        }
 
         public void Move()
         {
-            var chainStart = currentCup.Next;
-            var chainEnd = chainStart.Next.Next;
-            currentCup.Next = chainEnd.Next;
+            var chainStart = cupArray[currentCup];
+            var chainEnd = cupArray[cupArray[cupArray[currentCup]]];
+            cupArray[currentCup] = cupArray[chainEnd];
 
-            var dest = currentCup.Label - 1;
-            if (dest < minCup)
+            var dest = currentCup - 1;
+            if (dest < 0)
             {
-                dest = maxCup;
+                dest = cupArray.Length - 1;
             }
-            while(!IsValidTarget(chainStart,dest))
+            while (dest == chainStart || dest == cupArray[chainStart] || dest == chainEnd)
             {
                 dest--;
-                if (dest < minCup)
+                if (dest < 0)
                 {
-                    dest = maxCup;
+                    dest = cupArray.Length - 1;
                 }
             }
-            var target = cupMap[dest];
-            var targetNext = target.Next;
-            target.Next = chainStart;
-            chainEnd.Next = targetNext;
+            var target = dest;
+            var targetNext = cupArray[target];
+            cupArray[target] = chainStart;
+            cupArray[chainEnd] = targetNext;
 
-            currentCup = currentCup.Next;
-        }
-
-        bool IsValidTarget(Cup chainStart, int target)
-        {
-            if (chainStart.Label == target)
-            {
-                return false;
-            }
-            if (chainStart.Next.Label == target)
-            {
-                return false;
-            }
-            if (chainStart.Next.Next.Label == target)
-            {
-                return false;
-            }
-
-            return true;
+            currentCup = cupArray[currentCup];
         }
 
         public void PrintCups()
         {
-            Console.Write("(" + currentCup.Label + ") ");
-            var nextCup = currentCup.Next;
+            Console.Write("(" + (currentCup + 1) + ") ");
+            var nextCup = cupArray[currentCup];
             while (nextCup != currentCup)
             {
-                Console.Write(nextCup.Label + " ");
-                nextCup = nextCup.Next;
+                Console.Write((nextCup + 1) + " ");
+                nextCup = cupArray[nextCup];
             }
             Console.WriteLine();
         }
 
         public string CupsStartingAt(int cupNumber)
         {
+
             StringBuilder sb = new();
-            
 
-            var stopCup = cupMap[cupNumber];
-            var startingCup = stopCup.Next;
 
-            sb.Append(startingCup.Label);
-            var nextCup = startingCup.Next;
-            while (nextCup != stopCup)
+            var nextCup = cupArray[cupNumber-1];
+
+            while (nextCup != (cupNumber-1))
             {
-                sb.Append(nextCup.Label);
-                nextCup = nextCup.Next;
+                sb.Append((nextCup + 1));
+                nextCup = cupArray[nextCup];
             }
 
             return sb.ToString();
         }
-        public Cup GetCup(int cupNumber)
+
+        public int GetNextCup(int cupNumber)
         {
-            return cupMap[cupNumber];
+            return cupArray[cupNumber - 1] + 1;
         }
-    }
 
-    public class Cup
-    {
-        public int Label;
-        public Cup Next;
     }
-
 
     public class Day_23 : BaseDay
     {
-        public Day_23()
-        {
-            
-        }
 
         public override string Solve_1()
         {
@@ -201,17 +128,17 @@ namespace AdventOfCode
 
         public override string Solve_2()
         {
-            CupGame g = new CupGame(InputParser.AsLine(InputFilePath),1000000);
+            CupGame g = new CupGame(InputParser.AsLine(InputFilePath), 1000000);
             for (var x = 0; x < 10000000; x++)
             {
                 g.Move();
             }
-            var cup1 = g.GetCup(1);
-            var cup2 = cup1.Next;
-            var cup3 = cup2.Next;
+            var cup1 = g.GetNextCup(1);
+            var cup2 = g.GetNextCup(cup1);
 
-            long ans = cup2.Label * (long)cup3.Label;
 
+            //long ans = cup2.Label * (long)cup3.Label;
+            long ans = cup1 * (long)cup2;
             return ans.ToString();
         }
 
