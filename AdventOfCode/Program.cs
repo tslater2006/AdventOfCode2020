@@ -5,5 +5,7 @@ using Spectre.Console;
 using System.IO.Compression;
 using System.Linq;
 
+
+
 //Solver.SolveAll();
-Solver.Solve<Day_23>(false);
+Solver.Solve<Day_25>(false);
